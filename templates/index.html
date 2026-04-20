@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusTech - Premium Electronics</title>
+    <meta name="description" content="Premium tech store for all your electronics needs">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/" class="logo">
+        <i class="fa-solid fa-atom"></i>
+        NexusTech
+    </a>
+    <a href="/cart" class="cart-btn">
+        <i class="fa-solid fa-cart-shopping"></i>
+        Cart <span class="badge">{{ cart|length }}</span>
+    </a>
+</nav>
+
+<main class="main-content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <h1 class="page-title">Discover Premium Tech</h1>
+
+    <div class="product-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <div class="product-icon">
+                {% if 'Laptop' in product.name %}
+                    <i class="fa-solid fa-laptop"></i>
+                {% elif 'Phone' in product.name %}
+                    <i class="fa-solid fa-mobile-screen"></i>
+                {% elif 'Headphones' in product.name %}
+                    <i class="fa-solid fa-headphones"></i>
+                {% elif 'Watch' in product.name %}
+                    <i class="fa-solid fa-stopwatch"></i>
+                {% else %}
+                    <i class="fa-solid fa-box"></i>
+                {% endif %}
+            </div>
+            <h3 class="product-name">{{ product.name }}</h3>
+            <div class="product-price">₹{{ "{:,}".format(product.price) }}</div>
+            <a href="/add/{{ product.id }}" class="add-btn">
+                <i class="fa-solid fa-cart-plus"></i> Add to Cart
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+
+</body>
+</html>

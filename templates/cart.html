@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart - NexusTech</title>
+    <meta name="description" content="View your cart items securely">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/" class="logo">
+        <i class="fa-solid fa-atom"></i>
+        NexusTech
+    </a>
+    <a href="/cart" class="cart-btn">
+        <i class="fa-solid fa-cart-shopping"></i>
+        Cart <span class="badge">{{ cart|length }}</span>
+    </a>
+</nav>
+
+<main class="main-content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <h1 class="page-title">Shopping Cart</h1>
+
+    <div class="cart-container">
+        {% if cart|length > 0 %}
+            <div class="cart-items">
+                {% for item in cart %}
+                <div class="cart-item">
+                    <div class="item-info">
+                        <div class="item-icon">
+                            {% if 'Laptop' in item.name %}
+                                <i class="fa-solid fa-laptop"></i>
+                            {% elif 'Phone' in item.name %}
+                                <i class="fa-solid fa-mobile-screen"></i>
+                            {% elif 'Headphones' in item.name %}
+                                <i class="fa-solid fa-headphones"></i>
+                            {% elif 'Watch' in item.name %}
+                                <i class="fa-solid fa-stopwatch"></i>
+                            {% else %}
+                                <i class="fa-solid fa-box"></i>
+                            {% endif %}
+                        </div>
+                        <div class="item-details">
+                            <h4>{{ item.name }}</h4>
+                            <p>Ref: #NXTR-{{ item.id }}</p>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <span class="item-price">₹{{ "{:,}".format(item.price) }}</span>
+                        <a href="/remove/{{ loop.index0 }}" class="remove-btn">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="cart-summary">
+                <div class="cart-total">
+                    <h3>Total Amount</h3>
+                    <span>₹{{ "{:,}".format(total) }}</span>
+                </div>
+                <button class="checkout-btn" onclick="openModal()">
+                    Checkout Now <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        {% else %}
+            <div class="empty-cart">
+                <i class="fa-solid fa-cart-arrow-down"></i>
+                <h2>Your cart is empty</h2>
+                <p>Looks like you haven't added any tech gear yet.</p>
+                <a href="/" class="btn-back">Browse Products</a>
+            </div>
+        {% endif %}
+    </div>
+</main>
+
+<!-- Checkout Modal Overlay -->
+<div id="checkoutModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="success-icon">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h2>Order Confirmed!</h2>
+        </div>
+        <div class="modal-body">
+            <p>Thank you for shopping at <strong>NexusTech</strong>.</p>
+            <p class="demo-notice">This is a demo environment. No actual payment has been processed.</p>
+        </div>
+        <button class="btn-close-modal" onclick="closeModal()">Continue Shopping</button>
+    </div>
+</div>
+
+<script>
+    function openModal() {
+        document.getElementById('checkoutModal').classList.add('active');
+    }
+    function closeModal() {
+        document.getElementById('checkoutModal').classList.remove('active');
+        window.location.href = '/';
+    }
+</script>
+
+</body>
+</html>

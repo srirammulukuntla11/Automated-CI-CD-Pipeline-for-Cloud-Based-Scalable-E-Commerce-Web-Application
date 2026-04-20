@@ -1,0 +1,25 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker
+      run: docker --version
+
+    - name: Build Docker Image
+      run: docker build -t devops-app .
+
+    - name: Run Container (Test)
+      run: |
+        docker run -d -p 5000:5000 devops-app
+        sleep 5
+        curl http://localhost:5000
