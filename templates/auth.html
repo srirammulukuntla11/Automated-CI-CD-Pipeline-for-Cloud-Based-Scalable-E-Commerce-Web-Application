@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication - NexusTech</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .auth-container { max-width: 450px; margin: 4rem auto; background: var(--card-bg); padding: 3rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); }
+        .auth-title { text-align: center; margin-bottom: 2rem; font-size: 2rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.9rem; }
+        .form-group input { width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; outline: none; transition: border 0.3s; box-sizing: border-box;}
+        .form-group input:focus { border-color: var(--primary); }
+        .auth-toggle { text-align: center; margin-top: 1.5rem; color: var(--text-muted); }
+        .auth-toggle a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+<nav class="navbar"><a href="/" class="logo"><i class="fa-solid fa-atom"></i> NexusTech</a></nav>
+<main class="main-content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="auth-container">
+        <h2 class="auth-title">{% if mode == 'login' %}Welcome Back{% else %}Create Account{% endif %}</h2>
+        <form action="{{ url_for('login' if mode == 'login' else 'register') }}" method="POST">
+            {% if mode == 'register' %}
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" required>
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" required>
+            </div>
+            {% endif %}
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" required>
+            </div>
+            <button type="submit" class="btn-primary add-to-cart-large" style="width: 100%; margin-top: 1rem; padding: 1rem;">
+                {% if mode == 'login' %}Sign In{% else %}Register{% endif %}
+            </button>
+        </form>
+        <div class="auth-toggle">
+            {% if mode == 'login' %}
+                Don't have an account? <a href="/register">Sign up</a>
+            {% else %}
+                Already have an account? <a href="/login">Log in</a>
+            {% endif %}
+        </div>
+    </div>
+</main>
+</body>
+</html>

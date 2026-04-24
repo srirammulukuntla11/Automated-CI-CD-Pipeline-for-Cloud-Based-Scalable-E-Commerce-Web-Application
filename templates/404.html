@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Not Found - NexusTech</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 60vh;
+        }
+        .error-code {
+            font-size: 8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        .error-message {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/" class="logo">
+        <i class="fa-solid fa-atom"></i>
+        NexusTech
+    </a>
+</nav>
+
+<main class="main-content">
+    <div class="error-container">
+        <div class="error-code">404</div>
+        <div class="error-message">Oops! The page you're looking for has drifted into the void.</div>
+        <a href="/" class="btn-back"><i class="fa-solid fa-home"></i> Return to Homepage</a>
+    </div>
+</main>
+
+</body>
+</html>

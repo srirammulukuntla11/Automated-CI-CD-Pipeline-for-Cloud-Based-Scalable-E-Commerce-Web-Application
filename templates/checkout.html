@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - NexusTech</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar"><a href="/" class="logo"><i class="fa-solid fa-atom"></i> NexusTech Secure Checkout</a></nav>
+<main class="main-content">
+    <h1 class="page-title">Complete Your Order</h1>
+    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 3rem;">
+        
+        <div style="background: var(--card-bg); padding: 3rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05);">
+            <h3>Shipping Details</h3>
+            <form action="/checkout" method="POST" id="checkoutForm" style="margin-top: 1.5rem;">
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Full Name</label>
+                    <input type="text" value="{% if user %}{{ user.name }}{% endif %}" required style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; outline: none; box-sizing: border-box;">
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Shipping Address</label>
+                    <textarea name="address" required style="width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; outline: none; box-sizing: border-box; min-height: 100px; font-family: inherit;"></textarea>
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Payment Method</label>
+                    
+                    <label style="padding: 1rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; background: rgba(0,0,0,0.2); display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; cursor: pointer; transition: all 0.3s;">
+                        <input type="radio" name="payment_method" value="credit_card" required checked> 
+                        <i class="fa-brands fa-cc-visa" style="font-size: 1.5rem; color: #3b82f6;"></i> Credit / Debit Card
+                    </label>
+                    
+                    <label style="padding: 1rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; background: rgba(0,0,0,0.2); display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; cursor: pointer; transition: all 0.3s;">
+                        <input type="radio" name="payment_method" value="paypal"> 
+                        <i class="fa-brands fa-paypal" style="font-size: 1.5rem; color: #0ea5e9;"></i> PayPal
+                    </label>
+
+                    <label style="padding: 1rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; background: rgba(0,0,0,0.2); display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; cursor: pointer; transition: all 0.3s;">
+                        <input type="radio" name="payment_method" value="upi"> 
+                        <i class="fa-brands fa-google-pay" style="font-size: 1.5rem; color: #10b981;"></i> UPI / Google Pay
+                    </label>
+
+                    <label style="padding: 1rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; background: rgba(0,0,0,0.2); display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; cursor: pointer; transition: all 0.3s;">
+                        <input type="radio" name="payment_method" value="net_banking"> 
+                        <i class="fa-solid fa-building-columns" style="font-size: 1.5rem; color: #8b5cf6;"></i> Net Banking
+                    </label>
+
+                    <label style="padding: 1rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; background: rgba(0,0,0,0.2); display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: all 0.3s;">
+                        <input type="radio" name="payment_method" value="cod"> 
+                        <i class="fa-solid fa-money-bill-wave" style="font-size: 1.5rem; color: #f59e0b;"></i> Cash on Delivery (COD)
+                    </label>
+                </div>
+                <button type="submit" class="btn-primary add-to-cart-large" style="width: 100%; margin-top: 1rem;"><i class="fa-solid fa-lock"></i> Pay ₹{{ "{:,}".format(total) }}</button>
+            </form>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.5); padding: 3rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); height: fit-content;">
+            <h3>Order Summary</h3>
+            <div style="margin-top: 1.5rem; max-height: 300px; overflow-y: auto;">
+                {% for item in cart %}
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <img src="{{ item.image }}" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
+                    <div>
+                        <h4 style="font-size: 1rem;">{{ item.name }}</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Qty: {{ item.get('quantity', 1) }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div style="margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: var(--text-muted);">
+                    <span>Subtotal</span>
+                    <span>₹{{ "{:,}".format(subtotal) }}</span>
+                </div>
+                {% if discount > 0 %}
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: var(--danger);">
+                    <span>Discount applied</span>
+                    <span>-₹{{ "{:,}".format(discount) }}</span>
+                </div>
+                {% endif %}
+                <div style="display: flex; justify-content: space-between; margin-top: 1rem; font-size: 1.5rem; font-weight: 700;">
+                    <span>Total</span>
+                    <span style="color: var(--success);">₹{{ "{:,}".format(total) }}</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - NexusTech</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/" class="logo">
+        <i class="fa-solid fa-atom"></i>
+        NexusTech
+    </a>
+    <div class="nav-controls">
+        <a href="/wishlist" class="nav-icon-link" style="color: white; text-decoration: none; position: relative; margin: 0 10px;">
+            <i class="fa-solid fa-heart"></i>
+            {% if wishlist|length > 0 %}<span class="badge" style="position: absolute; top: -8px; right: -12px;">{{ wishlist|length }}</span>{% endif %}
+        </a>
+        {% if user %}
+            <a href="/profile" class="nav-icon-link" style="color: white; text-decoration: none; margin-right: 15px;"><i class="fa-solid fa-user"></i> Profile</a>
+        {% else %}
+            <a href="/login" class="nav-icon-link" style="color: white; text-decoration: none; margin-right: 15px;"><i class="fa-solid fa-user"></i> Login</a>
+        {% endif %}
+        <a href="/cart" class="cart-btn">
+            <i class="fa-solid fa-cart-shopping"></i>
+            Cart <span class="badge">{{ cart|length }}</span>
+        </a>
+    </div>
+</nav>
+
+<main class="main-content" style="padding-top: 2rem;">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <a href="/" class="btn-back" style="margin-bottom: 2rem; display: inline-block; margin-top: 0;"><i class="fa-solid fa-arrow-left"></i> Back to Store</a>
+
+    <div class="product-detail-container">
+        <div class="product-detail-image">
+            <img src="{{ product.image }}" alt="{{ product.name }}">
+        </div>
+        <div class="product-detail-info">
+            <div class="badge-category">{{ product.category }}</div>
+            <h1>{{ product.name }}</h1>
+            <div class="product-rating detail-rating">
+                <span class="stars"><i class="fa-solid fa-star"></i> {{ product.rating }}</span>
+                <span class="reviews">{{ product.reviews }} Verified Reviews</span>
+            </div>
+            
+            <div class="price-block">
+                <span class="price">₹{{ "{:,}".format(product.price) }}</span>
+                <span class="stock-status"><i class="fa-solid fa-check-circle"></i> In Stock</span>
+            </div>
+
+            <div class="product-description-block">
+                <h3>About this item</h3>
+                <p>{{ product.desc }}</p>
+                <ul class="features-list">
+                    <li><i class="fa-solid fa-bolt"></i> Free Express Delivery</li>
+                    <li><i class="fa-solid fa-shield"></i> 1 Year Warranty Included</li>
+                    <li><i class="fa-solid fa-rotate-left"></i> 30-Day Return Policy</li>
+                </ul>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <a href="/add/{{ product.id }}" class="btn-primary add-to-cart-large" style="flex: 1; margin: 0;">
+                    <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                </a>
+                <a href="/wishlist/toggle/{{ product.id }}" class="btn-primary" style="padding: 1.2rem; background: rgba(239, 68, 68, 0.1); color: var(--danger); border-radius: 12px; display: flex; align-items: center; justify-content: center; width: 60px;">
+                    <i class="fa-solid fa-heart"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if related %}
+    <div style="margin-top: 5rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 4rem;">
+        <h2 style="margin-bottom: 2rem;">You Might Also Like</h2>
+        <div class="product-grid">
+            {% for related_prod in related %}
+            <div class="product-card" style="animation: none; opacity: 1;">
+                <a href="/product/{{ related_prod.id }}" class="product-image">
+                    <img src="{{ related_prod.image }}" alt="{{ related_prod.name }}">
+                </a>
+                <div class="product-info">
+                    <a href="/product/{{ related_prod.id }}" style="text-decoration: none; color: inherit;">
+                        <h3 class="product-name" style="font-size: 1.1rem;">{{ related_prod.name }}</h3>
+                    </a>
+                    <div class="product-price" style="font-size: 1.4rem; margin-top: 0.5rem; margin-bottom: 1rem;">₹{{ "{:,}".format(related_prod.price) }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</main>
+
+</body>
+</html>

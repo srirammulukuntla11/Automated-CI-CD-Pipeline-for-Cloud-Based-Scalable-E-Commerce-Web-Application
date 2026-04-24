@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist - NexusTech</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar">
+    <a href="/" class="logo"><i class="fa-solid fa-atom"></i> NexusTech</a>
+    <div class="nav-controls">
+        <a href="/cart" class="cart-btn">
+            <i class="fa-solid fa-cart-shopping"></i>
+            Cart <span class="badge">{{ cart|length }}</span>
+        </a>
+    </div>
+</nav>
+<main class="main-content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <h1 class="page-title">My Wishlist ❤️</h1>
+    {% if products %}
+    <div class="product-grid">
+        {% for product in products %}
+        <div class="product-card" style="animation: none; opacity: 1;">
+            <a href="/product/{{ product.id }}" class="product-image">
+                <img src="{{ product.image }}" alt="{{ product.name }}">
+            </a>
+            <div class="product-info">
+                <h3 class="product-name">{{ product.name }}</h3>
+                <div class="product-price">₹{{ "{:,}".format(product.price) }}</div>
+                <div style="display: flex; gap: 1rem; margin-top: auto;">
+                    <a href="/add/{{ product.id }}" class="btn-primary" style="flex: 1; padding: 0.8rem; text-align: center; border-radius: 8px; text-decoration: none; color: white; background: linear-gradient(135deg, var(--primary), var(--secondary));"><i class="fa-solid fa-cart-plus"></i> Add</a>
+                    <a href="/wishlist/toggle/{{ product.id }}" class="btn-primary" style="padding: 0.8rem; text-align: center; border-radius: 8px; text-decoration: none; color: var(--danger); background: rgba(239, 68, 68, 0.1);"><i class="fa-solid fa-trash"></i></a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <div style="text-align: center; color: var(--text-muted); margin-top: 3rem;">
+            <i class="fa-regular fa-heart" style="font-size: 4rem; margin-bottom: 1.5rem; opacity: 0.5;"></i>
+            <h2>Your wishlist is empty.</h2>
+            <a href="/" class="btn-back" style="margin-top: 1rem;"><i class="fa-solid fa-store"></i> Browse Products</a>
+        </div>
+    {% endif %}
+</main>
+</body>
+</html>

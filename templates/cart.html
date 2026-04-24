@@ -15,10 +15,16 @@
         <i class="fa-solid fa-atom"></i>
         NexusTech
     </a>
-    <a href="/cart" class="cart-btn">
-        <i class="fa-solid fa-cart-shopping"></i>
-        Cart <span class="badge">{{ cart|length }}</span>
-    </a>
+    <div class="nav-controls">
+        <a href="/wishlist" class="nav-icon-link" style="color: white; text-decoration: none; margin-right: 15px;">
+            <i class="fa-solid fa-heart"></i>
+        </a>
+        {% if user %}
+            <a href="/profile" class="nav-icon-link" style="color: white; text-decoration: none; margin-right: 15px;"><i class="fa-solid fa-user"></i> Profile</a>
+        {% else %}
+            <a href="/login" class="nav-icon-link" style="color: white; text-decoration: none; margin-right: 15px;"><i class="fa-solid fa-user"></i> Login</a>
+        {% endif %}
+    </div>
 </nav>
 
 <main class="main-content">
@@ -40,18 +46,8 @@
                 {% for item in cart %}
                 <div class="cart-item">
                     <div class="item-info">
-                        <div class="item-icon">
-                            {% if 'Laptop' in item.name %}
-                                <i class="fa-solid fa-laptop"></i>
-                            {% elif 'Phone' in item.name %}
-                                <i class="fa-solid fa-mobile-screen"></i>
-                            {% elif 'Headphones' in item.name %}
-                                <i class="fa-solid fa-headphones"></i>
-                            {% elif 'Watch' in item.name %}
-                                <i class="fa-solid fa-stopwatch"></i>
-                            {% else %}
-                                <i class="fa-solid fa-box"></i>
-                            {% endif %}
+                        <div class="item-icon" style="overflow: hidden; padding: 0; background: transparent;">
+                            <img src="{{ item.image }}" alt="{{ item.name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
                         </div>
                         <div class="item-details">
                             <h4>{{ item.name }}</h4>
@@ -59,7 +55,8 @@
                         </div>
                     </div>
                     <div class="item-actions">
-                        <span class="item-price">₹{{ "{:,}".format(item.price) }}</span>
+                        <span class="item-qty">Qty: {{ item.get('quantity', 1) }}</span>
+                        <span class="item-price">₹{{ "{:,}".format(item.price * item.get('quantity', 1)) }}</span>
                         <a href="/remove/{{ loop.index0 }}" class="remove-btn">
                             <i class="fa-solid fa-trash"></i>
                         </a>
@@ -68,14 +65,31 @@
                 {% endfor %}
             </div>
 
-            <div class="cart-summary">
-                <div class="cart-total">
-                    <h3>Total Amount</h3>
-                    <span>₹{{ "{:,}".format(total) }}</span>
+            <div class="cart-summary" style="flex-direction: column; align-items: flex-end;">
+                <div style="width: 100%; max-width: 400px;">
+                    <form action="/apply_promo" method="POST" style="display: flex; gap: 0.5rem; margin-bottom: 2rem;">
+                        <input type="text" name="promo_code" placeholder="Promo code (e.g. NEXUS20)" style="flex: 1; padding: 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; outline: none;">
+                        <button type="submit" class="btn-primary" style="padding: 0.8rem 1.2rem; border-radius: 8px; background: var(--primary); color: white; border: none; cursor: pointer;">Apply</button>
+                    </form>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 1.2rem; color: var(--text-muted);">
+                        <span>Subtotal</span>
+                        <span>₹{{ "{:,}".format(subtotal) }}</span>
+                    </div>
+                    {% if discount > 0 %}
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 1.2rem; color: var(--danger);">
+                        <span>Discount applied</span>
+                        <span>-₹{{ "{:,}".format(discount) }}</span>
+                    </div>
+                    {% endif %}
+                    <div style="display: flex; justify-content: space-between; margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; align-items: center;">
+                        <h3 style="margin:0;">Total Amount</h3>
+                        <span style="font-size: 2.5rem; font-weight: 700; color: white;">₹{{ "{:,}".format(total) }}</span>
+                    </div>
+                    <a href="/checkout" class="checkout-btn" style="display: block; text-align: center; text-decoration: none; margin-top: 2rem; width: 100%; box-sizing: border-box;">
+                        Proceed to Secure Checkout <i class="fa-solid fa-arrow-right" style="margin-left: 0.5rem;"></i>
+                    </a>
                 </div>
-                <button class="checkout-btn" onclick="openModal()">
-                    Checkout Now <i class="fa-solid fa-arrow-right"></i>
-                </button>
             </div>
         {% else %}
             <div class="empty-cart">
@@ -88,32 +102,7 @@
     </div>
 </main>
 
-<!-- Checkout Modal Overlay -->
-<div id="checkoutModal" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <div class="success-icon">
-                <i class="fa-solid fa-check"></i>
-            </div>
-            <h2>Order Confirmed!</h2>
-        </div>
-        <div class="modal-body">
-            <p>Thank you for shopping at <strong>NexusTech</strong>.</p>
-            <p class="demo-notice">This is a demo environment. No actual payment has been processed.</p>
-        </div>
-        <button class="btn-close-modal" onclick="closeModal()">Continue Shopping</button>
-    </div>
-</div>
-
-<script>
-    function openModal() {
-        document.getElementById('checkoutModal').classList.add('active');
-    }
-    function closeModal() {
-        document.getElementById('checkoutModal').classList.remove('active');
-        window.location.href = '/';
-    }
-</script>
+<!-- Removed legacy modal -->
 
 </body>
 </html>

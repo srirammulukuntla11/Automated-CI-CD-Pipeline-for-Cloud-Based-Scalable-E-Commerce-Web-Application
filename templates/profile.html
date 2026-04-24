@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - NexusTech</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar">
+    <a href="/" class="logo"><i class="fa-solid fa-atom"></i> NexusTech</a>
+    <div class="nav-controls">
+        <a href="/logout" class="nav-icon-link" style="color: white; text-decoration: none; margin-right: 15px;"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+    </div>
+</nav>
+<main class="main-content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <h1 class="page-title">My Account</h1>
+    <div style="background: var(--card-bg); padding: 2rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 2rem;">
+        <h3>Profile Details</h3>
+        <p style="color: var(--text-muted); margin-top: 1rem;">Name: <span style="color: white;">{{ user.name }}</span></p>
+        <p style="color: var(--text-muted);">Email: <span style="color: white;">{{ user.email }}</span></p>
+    </div>
+
+    <div style="background: var(--card-bg); padding: 2rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05);">
+        <h3>Order History</h3>
+        {% if orders %}
+            <table style="width: 100%; text-align: left; margin-top: 1.5rem; border-collapse: collapse;">
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <th style="padding: 1rem 0;">Order ID</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th>Items</th>
+                </tr>
+                {% for order in orders %}
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 1rem 0; font-weight: 700;">{{ order.order_id }}</td>
+                    <td style="color: var(--success);">{{ order.status }}</td>
+                    <td>₹{{ "{:,}".format(order.total) }}</td>
+                    <td>{{ order.items|length }} items</td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p style="color: var(--text-muted); margin-top: 1rem;">You haven't placed any orders yet.</p>
+        {% endif %}
+    </div>
+</main>
+</body>
+</html>

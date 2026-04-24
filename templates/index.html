@@ -15,10 +15,26 @@
         <i class="fa-solid fa-atom"></i>
         NexusTech
     </a>
-    <a href="/cart" class="cart-btn">
-        <i class="fa-solid fa-cart-shopping"></i>
-        Cart <span class="badge">{{ cart|length }}</span>
-    </a>
+    <div class="nav-controls">
+        <form class="search-form" action="/" method="GET">
+            <input type="text" name="search" placeholder="Search tech..." value="{{ search_query }}">
+            <input type="hidden" name="category" value="{{ current_category }}">
+            <button type="submit"><i class="fa-solid fa-search"></i></button>
+        </form>
+        <a href="/wishlist" class="nav-icon-link" style="color: white; text-decoration: none; position: relative; margin: 0 10px;">
+            <i class="fa-solid fa-heart"></i>
+            {% if wishlist|length > 0 %}<span class="badge" style="position: absolute; top: -8px; right: -12px;">{{ wishlist|length }}</span>{% endif %}
+        </a>
+        {% if user %}
+            <a href="/profile" class="nav-icon-link" style="color: white; text-decoration: none; margin-right: 15px;"><i class="fa-solid fa-user"></i> Profile</a>
+        {% else %}
+            <a href="/login" class="nav-icon-link" style="color: white; text-decoration: none; margin-right: 15px;"><i class="fa-solid fa-user"></i> Login</a>
+        {% endif %}
+        <a href="javascript:void(0)" onclick="toggleDrawer()" class="cart-btn">
+            <i class="fa-solid fa-cart-shopping"></i>
+            Cart <span class="badge">{{ cart|length }}</span>
+        </a>
+    </div>
 </nav>
 
 <main class="main-content">
@@ -32,33 +48,150 @@
       {% endif %}
     {% endwith %}
 
-    <h1 class="page-title">Discover Premium Tech</h1>
+    <div class="hero-banner">
+        <div class="hero-content">
+            <h2>Next-Gen Tech, Delivered</h2>
+            <p>Upgrade your workflow with our premium selection of electronics.</p>
+        </div>
+    </div>
 
+    <div class="store-controls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div class="category-filters" style="margin-bottom: 0;">
+            <a href="/?category=All&search={{ search_query }}&sort={{ current_sort }}" class="filter-btn {% if current_category == 'All' %}active{% endif %}">All</a>
+            <a href="/?category=Laptops&search={{ search_query }}&sort={{ current_sort }}" class="filter-btn {% if current_category == 'Laptops' %}active{% endif %}">Laptops</a>
+            <a href="/?category=Phones&search={{ search_query }}&sort={{ current_sort }}" class="filter-btn {% if current_category == 'Phones' %}active{% endif %}">Phones</a>
+            <a href="/?category=Accessories&search={{ search_query }}&sort={{ current_sort }}" class="filter-btn {% if current_category == 'Accessories' %}active{% endif %}">Accessories</a>
+            <a href="/?category=Gaming&search={{ search_query }}&sort={{ current_sort }}" class="filter-btn {% if current_category == 'Gaming' %}active{% endif %}">Gaming</a>
+            <a href="/?category=Smart Home&search={{ search_query }}&sort={{ current_sort }}" class="filter-btn {% if current_category == 'Smart Home' %}active{% endif %}">Smart Home</a>
+        </div>
+        <form action="/" method="GET" class="sort-form">
+            <input type="hidden" name="search" value="{{ search_query }}">
+            <input type="hidden" name="category" value="{{ current_category }}">
+            <select name="sort" onchange="this.form.submit()" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 0.7rem 1.2rem; border-radius: 8px; font-family: inherit; font-size: 1rem; cursor: pointer; outline: none;">
+                <option value="default" style="color: black;" {% if current_sort == 'default' %}selected{% endif %}>Sort by: Featured</option>
+                <option value="price_asc" style="color: black;" {% if current_sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                <option value="price_desc" style="color: black;" {% if current_sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                <option value="top_rated" style="color: black;" {% if current_sort == 'top_rated' %}selected{% endif %}>Top Rated</option>
+            </select>
+        </form>
+    </div>
     <div class="product-grid">
         {% for product in products %}
         <div class="product-card">
-            <div class="product-icon">
-                {% if 'Laptop' in product.name %}
-                    <i class="fa-solid fa-laptop"></i>
-                {% elif 'Phone' in product.name %}
-                    <i class="fa-solid fa-mobile-screen"></i>
-                {% elif 'Headphones' in product.name %}
-                    <i class="fa-solid fa-headphones"></i>
-                {% elif 'Watch' in product.name %}
-                    <i class="fa-solid fa-stopwatch"></i>
-                {% else %}
-                    <i class="fa-solid fa-box"></i>
-                {% endif %}
-            </div>
-            <h3 class="product-name">{{ product.name }}</h3>
-            <div class="product-price">₹{{ "{:,}".format(product.price) }}</div>
-            <a href="/add/{{ product.id }}" class="add-btn">
-                <i class="fa-solid fa-cart-plus"></i> Add to Cart
+            {% if product.badge %}
+                <div class="product-badge 
+                    {% if 'Bestseller' in product.badge %}badge-bestseller
+                    {% elif 'New' in product.badge %}badge-new
+                    {% else %}badge-sale{% endif %}">
+                    {{ product.badge }}
+                </div>
+            {% endif %}
+            <a href="/product/{{ product.id }}" class="product-image">
+                <img src="{{ product.image }}" alt="{{ product.name }}">
             </a>
+            <div class="product-info">
+                <a href="/product/{{ product.id }}" style="text-decoration: none; color: inherit;">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                </a>
+                <div class="product-rating">
+                    <span class="stars"><i class="fa-solid fa-star"></i> {{ product.rating }}</span>
+                    <span class="reviews">({{ product.reviews }})</span>
+                </div>
+                <p class="product-desc" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">{{ product.desc }}</p>
+                <div class="product-price">₹{{ "{:,}".format(product.price) }}</div>
+                <a href="/add/{{ product.id }}" class="add-btn">
+                    <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                </a>
+            </div>
         </div>
         {% endfor %}
     </div>
 </main>
+
+<footer class="premium-footer">
+    <div class="footer-grid">
+        <div class="footer-brand">
+            <a href="/" class="logo"><i class="fa-solid fa-atom"></i> NexusTech</a>
+            <p>Your premium destination for next-generation electronics, smart devices, and ultimate gaming setups. We deliver the future, today.</p>
+        </div>
+        <div class="footer-links">
+            <h4>Shop</h4>
+            <ul>
+                <li><a href="/?category=Laptops">Laptops & PCs</a></li>
+                <li><a href="/?category=Phones">Smartphones</a></li>
+                <li><a href="/?category=Gaming">Gaming Consoles</a></li>
+            </ul>
+        </div>
+        <div class="footer-links">
+            <h4>Support</h4>
+            <ul>
+                <li><a href="#">Track Order</a></li>
+                <li><a href="#">Returns & Refunds</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </div>
+        <div class="footer-links">
+            <h4>Stay Connected</h4>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Subscribe for 15% off your first order!</p>
+            <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Subscribed!');">
+                <input type="email" placeholder="Enter your email" required>
+                <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 NexusTech Inc. All Rights Reserved. Designed for Excellence.</p>
+    </div>
+</footer>
+
+<!-- Slide-out Cart Drawer -->
+<div class="cart-drawer-overlay" id="cartDrawer" onclick="if(event.target === this) toggleDrawer()">
+    <div class="cart-drawer">
+        <div class="drawer-header">
+            <h2>Your Cart ({{ cart|length }})</h2>
+            <button class="close-drawer" onclick="toggleDrawer()"><i class="fa-solid fa-times"></i></button>
+        </div>
+        <div class="drawer-body">
+            {% if cart|length > 0 %}
+                {% for item in cart %}
+                <div class="mini-cart-item">
+                    <img src="{{ item.image }}" class="mini-cart-img">
+                    <div class="mini-cart-info">
+                        <h4>{{ item.name }}</h4>
+                        <p>₹{{ "{:,}".format(item.price) }} <span style="color: var(--text-muted); font-size: 0.8rem;">x{{ item.get('quantity', 1) }}</span></p>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; color: var(--text-muted); margin-top: 3rem;">
+                    <i class="fa-solid fa-cart-arrow-down" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <p>Your cart is empty. Start shopping!</p>
+                </div>
+            {% endif %}
+        </div>
+        <div class="drawer-footer">
+            <form action="/apply_promo" method="POST" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
+                <input type="text" name="promo_code" placeholder="Promo code (e.g. NEXUS20)" style="flex: 1; padding: 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white;">
+                <button type="submit" class="btn-primary" style="padding: 0.8rem 1.2rem; border-radius: 8px; background: var(--primary); color: white; border: none; cursor: pointer;">Apply</button>
+            </form>
+            {% set drawer_total = namespace(value=0) %}
+            {% for item in cart %}
+                {% set drawer_total.value = drawer_total.value + (item.price * item.get('quantity', 1)) %}
+            {% endfor %}
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 1.2rem; font-weight: 700;">
+                <span>Subtotal</span>
+                <span style="color: var(--success);">₹{{ "{:,}".format(drawer_total.value) }}</span>
+            </div>
+            <a href="/checkout" class="btn-primary add-to-cart-large" style="display: block; text-align: center; box-sizing: border-box;">Go to Checkout <i class="fa-solid fa-arrow-right" style="margin-left: 0.5rem;"></i></a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleDrawer() {
+        document.getElementById('cartDrawer').classList.toggle('active');
+    }
+</script>
 
 </body>
 </html>
