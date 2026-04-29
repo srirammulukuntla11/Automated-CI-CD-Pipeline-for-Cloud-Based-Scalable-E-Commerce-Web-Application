@@ -133,7 +133,7 @@
         <div class="footer-links">
             <h4>Stay Connected</h4>
             <p style="color: var(--text-muted); font-size: 0.9rem;">Subscribe for 15% off your first order!</p>
-            <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Subscribed!');">
+            <form class="newsletter-form" onsubmit="event.preventDefault(); showToast('Subscribed to Newsletter!');">
                 <input type="email" placeholder="Enter your email" required>
                 <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
             </form>
@@ -190,6 +190,26 @@
 <script>
     function toggleDrawer() {
         document.getElementById('cartDrawer').classList.toggle('active');
+    }
+
+    function showToast(message, type='success') {
+        let container = document.querySelector('.flash-messages');
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'flash-messages';
+            document.body.appendChild(container);
+        }
+        
+        const toast = document.createElement('div');
+        toast.className = `flash-message ${type}`;
+        toast.innerHTML = `<i class="fa-solid fa-check-circle" style="margin-right: 8px;"></i> ${message}`;
+        container.appendChild(toast);
+        
+        setTimeout(() => {
+            if (toast.parentNode === container) {
+                container.removeChild(toast);
+            }
+        }, 4500);
     }
 </script>
 
